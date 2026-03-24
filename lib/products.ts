@@ -1,0 +1,68 @@
+import { Product } from './types'
+
+export const products: Product[] = [
+  {
+    id: 1,
+    name: 'Ceramic Vase',
+    image: 'https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=500&fit=crop',
+    description: 'Beautiful hand-crafted ceramic vase',
+    price: '$89.99',
+    details: 'Handmade ceramic vase with elegant glazing. Perfect for flowers or as a standalone decorative piece. Height: 12 inches.',
+  },
+  {
+    id: 2,
+    name: 'Modern Vase',
+    image: 'https://images.unsplash.com/photo-1606933248051-5ce41e3b1e37?w=400&h=500&fit=crop',
+    description: 'Contemporary geometric vase',
+    price: '$129.99',
+    details: 'Sleek modern vase with geometric patterns. Made from premium ceramic. Height: 14 inches.',
+  },
+  {
+    id: 3,
+    name: 'Classic Urn',
+    image: 'https://images.unsplash.com/photo-1578987867-80fa62ca6f77?w=400&h=500&fit=crop',
+    description: 'Traditional Greek-inspired urn',
+    price: '$149.99',
+    details: 'Classic urn vase inspired by ancient Greek pottery. Excellent for flower arrangements. Height: 16 inches.',
+  },
+  {
+    id: 4,
+    name: 'Minimalist Vase',
+    image: 'https://images.unsplash.com/photo-1589939705066-3d9e1b1fe31c?w=400&h=500&fit=crop',
+    description: 'Sleek minimalist design',
+    price: '$99.99',
+    details: 'Clean minimalist vase with smooth curves. Perfect for modern interiors. Height: 10 inches.',
+  },
+  {
+    id: 5,
+    name: 'Textured Vase',
+    image: 'https://images.unsplash.com/photo-1578887309792-401b690caf4b?w=400&h=500&fit=crop',
+    description: 'Handcrafted textured ceramic',
+    price: '$119.99',
+    details: 'Artisanal vase with unique texture patterns. Each piece is one-of-a-kind. Height: 13 inches.',
+  },
+  {
+    id: 6,
+    name: 'Marble Vase',
+    image: 'https://images.unsplash.com/photo-1578983888437-a4b66a1c9763?w=400&h=500&fit=crop',
+    description: 'Premium marble finish',
+    price: '$179.99',
+    details: 'Luxury vase with marble-like finish. Durable and elegant. Height: 15 inches.',
+  },
+  {
+    id: 7,
+    name: 'Artistic Vase',
+    image: 'https://images.unsplash.com/photo-1589330694657-c4ef91539304?w=400&h=500&fit=crop',
+    description: 'Artist-designed decorative piece',
+    price: '$159.99',
+    details: 'Unique artistic vase designed by local artisans. Great conversation starter. Height: 12 inches.',
+  },
+  {
+    id: 8,
+    name: 'Bronze Vase',
+    image: 'https://images.unsplash.com/photo-1578895630816-e00f3f29a4d0?w=400&h=500&fit=crop',
+    description: 'Elegant bronze-toned vessel',
+    price: '$139.99',
+    details: 'Bronze-toned ceramic vase with metallic accents. Timeless elegance. Height: 14 inches.',
+  },
+]
