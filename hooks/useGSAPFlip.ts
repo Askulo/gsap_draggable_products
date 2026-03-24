@@ -1,46 +1,63 @@
-import { useEffect } from 'react'
+'use client'
+
+import { useRef, useCallback } from 'react'
 import gsap from 'gsap'
 import { Flip } from 'gsap/Flip'
 
 gsap.registerPlugin(Flip)
 
-export function useGSAPFlip(ref: React.RefObject<HTMLElement>) {
-  useEffect(() => {
-    if (!ref.current) return
+interface UseFlipProps {
+  onFlipComplete?: () => void
+}
 
-    const element = ref.current
-    let state = Flip.getState(element)
+export function useGSAPFlip({ onFlipComplete }: UseFlipProps = {}) {
+  const stateRef = useRef<any>(null)
+  const originalParentRef = useRef<HTMLElement | null>(null)
+  const currentProductRef = useRef<HTMLElement | null>(null)
 
-    const handleMouseEnter = () => {
-      Flip.to(state, {
-        duration: 0.4,
-        ease: 'power2.out',
-      })
-      state = Flip.getState(element)
+  const flipProduct = useCallback((product: HTMLElement, target: HTMLElement) => {
+    currentProductRef.current = product
+    originalParentRef.current = product.parentNode as HTMLElement
 
-      gsap.to(element, {
-        scale: 1.05,
-        duration: 0.4,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
+    stateRef.current = Flip.getState(product)
+    target.appendChild(product)
+
+    Flip.from(stateRef.current, {
+      absolute: true,
+      duration: 1.2,
+      ease: 'power3.inOut',
+      scale: true,
+    })
+
+    if (onFlipComplete) onFlipComplete()
+  }, [onFlipComplete])
+
+  const reverseFlip = useCallback(() => {
+    if (!currentProductRef.current || !originalParentRef.current || !stateRef.current) {
+      return
     }
 
-    const handleMouseLeave = () => {
-      gsap.to(element, {
-        scale: 1,
-        duration: 0.4,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
-    }
+    const state = Flip.getState(currentProductRef.current)
+    originalParentRef.current.appendChild(currentProductRef.current)
 
-    element.addEventListener('mouseenter', handleMouseEnter)
-    element.addEventListener('mouseleave', handleMouseLeave)
+    Flip.from(state, {
+      absolute: true,
+      duration: 1.2,
+      ease: 'power3.inOut',
+      scale: true,
+      onStart: () => {
+        currentProductRef.current!.style.visibility = 'visible'
+      },
+    })
 
-    return () => {
-      element.removeEventListener('mouseenter', handleMouseEnter)
-      element.removeEventListener('mouseleave', handleMouseLeave)
-    }
-  }, [ref])
+    currentProductRef.current = null
+    originalParentRef.current = null
+    stateRef.current = null
+  }, [])
+
+  return {
+    flipProduct,
+    reverseFlip,
+    currentProduct: currentProductRef,
+  }
 }

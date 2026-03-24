@@ -1,68 +1,82 @@
-import { Product } from './types'
+export interface Product {
+  id: string
+  image: string
+  title: string
+  description: string
+  price: number
+}
+
+export interface GridProduct extends Product {
+  gridId: string
+}
 
 export const products: Product[] = [
   {
-    id: 1,
-    name: 'Ceramic Vase',
-    image: 'https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=500&fit=crop',
-    description: 'Beautiful hand-crafted ceramic vase',
-    price: '$89.99',
-    details: 'Handmade ceramic vase with elegant glazing. Perfect for flowers or as a standalone decorative piece. Height: 12 inches.',
+    id: '1',
+    image: '/public/img-1.png',
+    title: 'The Red Vase',
+    description: 'A timeless piece of art, The Red Vase is crafted with elegance and simplicity. Its bold crimson finish adds a touch of warmth and sophistication to any space, making it a perfect centerpiece for your living room, dining table, or office.',
+    price: 125.0,
   },
   {
-    id: 2,
-    name: 'Modern Vase',
-    image: 'https://images.unsplash.com/photo-1606933248051-5ce41e3b1e37?w=400&h=500&fit=crop',
-    description: 'Contemporary geometric vase',
-    price: '$129.99',
-    details: 'Sleek modern vase with geometric patterns. Made from premium ceramic. Height: 14 inches.',
+    id: '2',
+    image: '/public/img-2.png',
+    title: 'Azure Dream Vase',
+    description: 'Inspired by the tranquility of the ocean, the Azure Dream Vase brings a serene blue aesthetic to your home. Perfect for modern interiors seeking a contemporary touch.',
+    price: 145.0,
   },
   {
-    id: 3,
-    name: 'Classic Urn',
-    image: 'https://images.unsplash.com/photo-1578987867-80fa62ca6f77?w=400&h=500&fit=crop',
-    description: 'Traditional Greek-inspired urn',
-    price: '$149.99',
-    details: 'Classic urn vase inspired by ancient Greek pottery. Excellent for flower arrangements. Height: 16 inches.',
+    id: '3',
+    image: '/public/img-3.png',
+    title: 'Classic White Elegance',
+    description: 'Pure and pristine, the Classic White Elegance vase represents timeless beauty. Its minimalist design complements any decor style while making a subtle statement.',
+    price: 99.99,
   },
   {
-    id: 4,
-    name: 'Minimalist Vase',
-    image: 'https://images.unsplash.com/photo-1589939705066-3d9e1b1fe31c?w=400&h=500&fit=crop',
-    description: 'Sleek minimalist design',
-    price: '$99.99',
-    details: 'Clean minimalist vase with smooth curves. Perfect for modern interiors. Height: 10 inches.',
+    id: '4',
+    image: '/public/img-4.png',
+    title: 'Golden Harmony',
+    description: 'Luxurious and warm, the Golden Harmony vase brings opulence to your space. Its intricate golden tones create an atmosphere of sophistication and wealth.',
+    price: 189.99,
   },
   {
-    id: 5,
-    name: 'Textured Vase',
-    image: 'https://images.unsplash.com/photo-1578887309792-401b690caf4b?w=400&h=500&fit=crop',
-    description: 'Handcrafted textured ceramic',
-    price: '$119.99',
-    details: 'Artisanal vase with unique texture patterns. Each piece is one-of-a-kind. Height: 13 inches.',
+    id: '5',
+    image: '/public/img-5.png',
+    title: 'Emerald Gardens',
+    description: 'Fresh and vibrant, Emerald Gardens captures the essence of nature. Its deep green hue brings life and vitality to any room, perfect for plant lovers.',
+    price: 135.0,
   },
   {
-    id: 6,
-    name: 'Marble Vase',
-    image: 'https://images.unsplash.com/photo-1578983888437-a4b66a1c9763?w=400&h=500&fit=crop',
-    description: 'Premium marble finish',
-    price: '$179.99',
-    details: 'Luxury vase with marble-like finish. Durable and elegant. Height: 15 inches.',
+    id: '6',
+    image: '/public/img-6.png',
+    title: 'Twilight Essence',
+    description: 'Mysterious and elegant, Twilight Essence features deep purple tones that evoke a sense of magic and wonder. Ideal for creating an intimate atmosphere.',
+    price: 155.0,
   },
   {
-    id: 7,
-    name: 'Artistic Vase',
-    image: 'https://images.unsplash.com/photo-1589330694657-c4ef91539304?w=400&h=500&fit=crop',
-    description: 'Artist-designed decorative piece',
-    price: '$159.99',
-    details: 'Unique artistic vase designed by local artisans. Great conversation starter. Height: 12 inches.',
-  },
-  {
-    id: 8,
-    name: 'Bronze Vase',
-    image: 'https://images.unsplash.com/photo-1578895630816-e00f3f29a4d0?w=400&h=500&fit=crop',
-    description: 'Elegant bronze-toned vessel',
-    price: '$139.99',
-    details: 'Bronze-toned ceramic vase with metallic accents. Timeless elegance. Height: 14 inches.',
+    id: '7',
+    image: '/public/img-7.png',
+    title: 'Sunset Romance',
+    description: 'Warm and inviting, Sunset Romance combines oranges and reds to create a cozy ambiance. Perfect for those who appreciate warm earth tones.',
+    price: 129.99,
   },
 ]
+
+export function generateGridProducts(): GridProduct[] {
+  const gridProducts: GridProduct[] = []
+  let gridIndex = 0
+
+  for (let col = 0; col < 12; col++) {
+    for (let row = 0; row < 5; row++) {
+      const productId = (Math.floor(Math.random() * products.length) + 1).toString()
+      const product = products.find(p => p.id === productId) || products[0]
+      
+      gridProducts.push({
+        ...product,
+        gridId: `grid-${gridIndex++}`,
+      })
+    }
+  }
+
+  return gridProducts
+}

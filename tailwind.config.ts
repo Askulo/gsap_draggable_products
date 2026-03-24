@@ -8,14 +8,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#f8f6f1',
-        foreground: '#1a1a1a',
-        primary: '#8b7355',
-        secondary: '#c9b5a0',
-        accent: '#d4a574',
+        background: '#ffffff',
+        foreground: '#000000',
+        accent: '#4CAF50',
+        button: '#2a2a2a',
+        panel: '#ccc8c8',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['cursive', 'ui-sans-serif', 'system-ui'],
       },
     },
   },

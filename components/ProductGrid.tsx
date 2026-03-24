@@ -1,76 +1,96 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ProductCard } from './ProductCard'
-import { ProductDetails } from './ProductDetails'
-import { products } from '@/lib/products'
-import { Product } from '@/lib/types'
+import { GridProduct } from '@/lib/products'
 
-export function ProductGrid() {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-
-  useEffect(() => {
-    if (gridRef.current && titleRef.current) {
-      // Animate title
-      gsap.fromTo(
-        titleRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, delay: 0.3 }
-      )
-
-      // Stagger product cards
-      const cards = gridRef.current.querySelectorAll('[class*="group"]')
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          delay: 0.5,
-          ease: 'power2.out',
-        }
-      )
-    }
-  }, [])
-
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Product Grid */}
-      <section className="px-4 py-12 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h1
-            ref={titleRef}
-            className="text-4xl sm:text-5xl font-bold text-foreground mb-12 text-center opacity-0"
-          >
-            Explore Our{' '}
-            <span className="text-primary">Collection</span>
-          </h1>
-          
-          <div
-            ref={gridRef}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
-          >
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onSelect={setSelectedProduct}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Product Details Sidebar */}
-      <ProductDetails
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
-    </div>
-  )
+interface ProductGridProps {
+  products: GridProduct[]
+  onProductClick: (product: GridProduct, element: HTMLElement) => void
+  gridRef: React.RefObject<HTMLDivElement>
 }
+
+export const ProductGrid = React.forwardRef<HTMLDivElement, ProductGridProps>(
+  ({ products, onProductClick, gridRef }, ref) => {
+    const productRefs = useRef<(HTMLDivElement | null)[]>([])
+
+    // Intro animation on mount
+    useEffect(() => {
+      const productElements = productRefs.current.filter((el) => el !== null)
+      
+      const timeline = gsap.timeline()
+      
+      gsap.set(productElements, {
+        scale: 0.5,
+        opacity: 0,
+      })
+
+      timeline.to(productElements, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        ease: 'power3.out',
+        stagger: { amount: 1.2, from: 'random' },
+      })
+
+      return () => {
+        timeline.kill()
+      }
+    }, [])
+
+    // Organize products into columns (12 columns, 5 rows)
+    const columns: GridProduct[][] = []
+    for (let col = 0; col < 12; col++) {
+      columns[col] = products.slice(col * 5, (col + 1) * 5)
+    }
+
+    return (
+      <div
+        ref={gridRef}
+        className="grid"
+        style={{
+          position: 'absolute',
+          display: 'flex',
+          gap: '5vw',
+          cursor: 'grab',
+        }}
+      >
+        {columns.map((column, colIndex) => (
+          <div
+            key={`col-${colIndex}`}
+            className="column"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '5vw',
+              marginTop: colIndex % 2 === 1 ? '10vw' : '0',
+            }}
+          >
+            {column.map((product, rowIndex) => {
+              const index = colIndex * 5 + rowIndex
+              return (
+                <ProductCard
+                  key={product.gridId}
+                  ref={(el) => {
+                    if (el) productRefs.current[index] = el
+                  }}
+                  gridId={product.gridId}
+                  image={product.image}
+                  onClick={() => {
+                    const element = productRefs.current[index]
+                    if (element) {
+                      onProductClick(product, element)
+                    }
+                  }}
+                />
+              )
+            })}
+          </div>
+        ))}
+      </div>
+    )
+  }
+)
+
+ProductGrid.displayName = 'ProductGrid'

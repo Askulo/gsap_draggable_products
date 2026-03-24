@@ -1,9 +1,15 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'GSAP Draggable Products',
-  description: 'Interactive draggable product showcase with smooth GSAP animations',
+  description: 'Interactive draggable product grid with GSAP animations',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -13,9 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-background text-foreground">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

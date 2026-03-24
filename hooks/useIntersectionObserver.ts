@@ -1,48 +1,59 @@
-import { useEffect } from 'react'
+'use client'
+
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
+interface UseIntersectionObserverProps {
+  elements: HTMLElement[]
+  threshold?: number
+  excludeElement?: HTMLElement | null
+}
 
-export function useIntersectionObserver(ref: React.RefObject<HTMLElement>) {
+export function useIntersectionObserver({
+  elements,
+  threshold = 0.1,
+  excludeElement,
+}: UseIntersectionObserverProps) {
+  const observerRef = useRef<IntersectionObserver | null>(null)
+
   useEffect(() => {
-    if (!ref.current) return
+    if (!elements || elements.length === 0) return
 
-    const element = ref.current
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === excludeElement) return
 
-    ScrollTrigger.create({
-      trigger: element,
-      onEnter: () => {
-        gsap.to(element, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          overwrite: 'auto',
+          if (entry.isIntersecting) {
+            gsap.to(entry.target, {
+              scale: 1,
+              opacity: 1,
+              duration: 0.6,
+              ease: 'power3.out',
+            })
+          } else {
+            gsap.to(entry.target, {
+              opacity: 0,
+              scale: 0.8,
+              duration: 0.6,
+              ease: 'power2.in',
+            })
+          }
         })
       },
-      onEnterBack: () => {
-        gsap.to(element, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        })
-      },
-      onLeave: () => {
-        gsap.to(element, {
-          opacity: 0.5,
-          y: 20,
-          duration: 0.4,
-          ease: 'power2.in',
-          overwrite: 'auto',
-        })
-      },
+      { root: null, threshold }
+    )
+
+    elements.forEach((element) => {
+      if (observerRef.current) {
+        observerRef.current.observe(element)
+      }
     })
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+      observerRef.current?.disconnect()
     }
-  }, [ref])
+  }, [elements, threshold, excludeElement])
+
+  return observerRef
 }

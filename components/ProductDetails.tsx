@@ -1,128 +1,185 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { Product } from '@/lib/types'
-import gsap from 'gsap'
+import React, { useState } from 'react'
+import { Product } from '@/lib/products'
 
 interface ProductDetailsProps {
   product: Product | null
+  detailsRef: React.RefObject<HTMLDivElement>
+  thumbRef: React.RefObject<HTMLDivElement>
   onClose: () => void
 }
 
-export function ProductDetails({ product, onClose }: ProductDetailsProps) {
-  const panelRef = useRef<HTMLDivElement>(null)
-  const overlayRef = useRef<HTMLDivElement>(null)
+export const ProductDetails = React.forwardRef<HTMLDivElement, ProductDetailsProps>(
+  ({ product, detailsRef, thumbRef, onClose }, ref) => {
+    const [quantity, setQuantity] = useState(1)
 
-  useEffect(() => {
-    if (!panelRef.current || !overlayRef.current) return
-
-    if (product) {
-      // Animate panel in
-      gsap.to(overlayRef.current, {
-        opacity: 1,
-        duration: 0.3,
-        pointerEvents: 'auto',
-      })
-      gsap.to(panelRef.current, {
-        x: 0,
-        duration: 0.4,
-        ease: 'power2.out',
-      })
-    } else {
-      // Animate panel out
-      gsap.to(overlayRef.current, {
-        opacity: 0,
-        duration: 0.3,
-        pointerEvents: 'none',
-      })
-      gsap.to(panelRef.current, {
-        x: 512,
-        duration: 0.4,
-        ease: 'power2.in',
-      })
+    const handleQuantityChange = (delta: number) => {
+      setQuantity((prev) => Math.max(1, prev + delta))
     }
-  }, [product])
 
-  if (!product) return null
-
-  return (
-    <>
-      {/* Overlay */}
+    return (
       <div
-        ref={overlayRef}
-        className="fixed inset-0 bg-black/50 opacity-0 pointer-events-none z-40"
-        onClick={onClose}
-      />
-
-      {/* Side Panel */}
-      <div
-        ref={panelRef}
-        className="fixed right-0 top-0 h-full w-full sm:w-96 bg-white/95 backdrop-blur-sm shadow-2xl z-50 overflow-y-auto transform translate-x-full"
+        ref={detailsRef}
+        className="details"
+        onClick={(e) => {
+          if (e.target === detailsRef.current) {
+            onClose()
+          }
+        }}
+        style={{
+          position: 'absolute',
+          zIndex: 10,
+          top: 0,
+          left: 0,
+          width: '50vw',
+          height: '100vh',
+          padding: '2vw 0.5vw',
+          backgroundColor: '#ccc8c8',
+          transform: 'translate3d(50vw, 0, 0)',
+        }}
       >
-        <div className="p-6 space-y-6">
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close"
+        <div className="details_info"></div>
+        <div
+          className="details_body"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '2vw',
+            paddingTop: '5em',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 3,
+          }}
+        >
+          <div
+            ref={thumbRef}
+            className="details_thumb"
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '1 / 1',
+              zIndex: 3,
+              willChange: 'transform',
+            }}
+          ></div>
+
+          <div
+            className="details_texts"
+            style={{
+              maxWidth: '15rem',
+              position: 'relative',
+              zIndex: 3,
+              marginBottom: '5vh',
+            }}
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <h1
+              className="details_title"
+              style={{
+                fontSize: '1.8rem',
+                fontWeight: 'bold',
+                marginBottom: '1rem',
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-
-          {/* Product Image */}
-          <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden mt-6">
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Product Info */}
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">
-                {product.name}
-              </h2>
-              <p className="text-gray-600 mt-2">{product.description}</p>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-accent">
-                {product.price}
-              </span>
-            </div>
-
-            <p className="text-gray-700 leading-relaxed">
-              {product.details}
+              {product?.title || 'Product'}
+            </h1>
+            <p
+              style={{
+                marginBottom: '1rem',
+                lineHeight: '1.5',
+              }}
+            >
+              {product?.description}
+            </p>
+            <p
+              className="details_price"
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 500,
+                color: '#4CAF50',
+                marginBottom: '1.5rem',
+              }}
+            >
+              $ {product?.price.toFixed(2) || '0.00'}
             </p>
 
-            {/* Action Buttons */}
-            <div className="space-y-3 pt-6">
-              <button className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors">
-                Add to Cart
+            <div
+              className="details_quantity"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+                marginBottom: '1rem',
+              }}
+            >
+              <button
+                className="quantity-btn minus"
+                onClick={() => handleQuantityChange(-1)}
+                style={{
+                  backgroundColor: '#e0e0e0',
+                  border: 'none',
+                  padding: '0.2rem 0.5rem',
+                  cursor: 'pointer',
+                  fontSize: '1.2rem',
+                  borderRadius: '5px',
+                  transition: 'background-color 0.3s',
+                }}
+              >
+                -
               </button>
-              <button className="w-full border-2 border-primary text-primary py-3 rounded-lg font-semibold hover:bg-primary/5 transition-colors">
-                Add to Wishlist
+              <span
+                className="quantity-display"
+                style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 600,
+                }}
+              >
+                {quantity}
+              </span>
+              <button
+                className="quantity-btn plus"
+                onClick={() => handleQuantityChange(1)}
+                style={{
+                  backgroundColor: '#e0e0e0',
+                  border: 'none',
+                  padding: '0.2rem 0.5rem',
+                  cursor: 'pointer',
+                  fontSize: '1.2rem',
+                  borderRadius: '5px',
+                  transition: 'background-color 0.3s',
+                }}
+              >
+                +
               </button>
             </div>
+
+            <button
+              className="add-to-cart-btn"
+              onClick={() => {
+                console.log(`Added ${quantity} of ${product?.title} to cart`)
+              }}
+              style={{
+                backgroundColor: '#2a2a2a',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                fontSize: '1.2rem',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                marginTop: '1rem',
+                transition: 'background-color 0.3s',
+              }}
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
-    </>
-  )
-}
+    )
+  }
+)
+
+ProductDetails.displayName = 'ProductDetails'

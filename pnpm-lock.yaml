@@ -8,27 +8,18 @@ importers:
 
   .:
     dependencies:
-      autoprefixer:
-        specifier: ^10.4.16
-        version: 10.4.27(postcss@8.5.8)
       gsap:
-        specifier: ^3.12.2
+        specifier: ^3.12.5
         version: 3.14.2
       next:
         specifier: ^15.0.0
         version: 15.5.14(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      postcss:
-        specifier: ^8.4.32
-        version: 8.5.8
       react:
         specifier: ^19.0.0
         version: 19.2.4
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
-      tailwindcss:
-        specifier: ^3.4.1
-        version: 3.4.19
     devDependencies:
       '@types/node':
         specifier: ^20.10.5
@@ -39,6 +30,15 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: 18.3.7(@types/react@18.3.28)
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.27(postcss@8.5.8)
+      postcss:
+        specifier: ^8.4.32
+        version: 8.5.8
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.19
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
